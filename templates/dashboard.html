@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — EDT Collaboratif{% endblock %}
+
+{% block content %}
+
+<div class="row mb-4">
+  <div class="col">
+    <h2>👋 Bonjour, {{ user.first_name|default:user.username }} !</h2>
+    <p class="text-muted">Voici votre tableau de bord du jour.</p>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card text-center p-3">
+      <div style="font-size:2rem">📅</div>
+      <div class="fw-bold fs-4">{{ evenements_aujourd_hui.count }}</div>
+      <div class="text-muted small">Événements aujourd'hui</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center p-3">
+      <div style="font-size:2rem">📬</div>
+      <div class="fw-bold fs-4">{{ invitations_en_attente.count }}</div>
+      <div class="text-muted small">Invitations en attente</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center p-3">
+      <div style="font-size:2rem">👥</div>
+      <div class="fw-bold fs-4">{{ mes_groupes.count }}</div>
+      <div class="text-muted small">Mes groupes</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center p-3">
+      <div style="font-size:2rem">🔔</div>
+      <div class="fw-bold fs-4">{{ notifications_recentes.count }}</div>
+      <div class="text-muted small">Notifications non lues</div>
+    </div>
+  </div>
+</div>
+
+<div class="card p-4 mb-4">
+  <h5 class="mb-3">📅 Prochains événements</h5>
+  {% if prochains_evenements %}
+    {% for evt in prochains_evenements %}
+      <div class="d-flex align-items-center border-bottom py-2">
+        <div class="me-3 p-2 rounded"
+             style="background:{{ evt.couleur }}20; border-left: 4px solid {{ evt.couleur }}">
+          <strong>{{ evt.date }}</strong><br>
+          <small>{{ evt.heure_debut }} → {{ evt.heure_fin }}</small>
+        </div>
+        <div>
+          <div class="fw-bold">{{ evt.titre }}</div>
+          <small class="text-muted">
+            {{ evt.get_type_evt_display }} — {{ evt.get_priorite_display }}
+          </small>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-muted">Aucun événement à venir.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

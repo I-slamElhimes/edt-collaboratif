@@ -1,6 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import datetime
+
+
+def home(request):
+    """Page d'accueil pour les visiteurs non connectés."""
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    context = {
+        'hide_navbar': True,  # ← AJOUTEZ CETTE LIGNE
+    }
+    return render(request, 'home.html', context)
+
 
 @login_required
 def dashboard(request):

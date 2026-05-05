@@ -4,147 +4,346 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>{% block title %}EDT Collaboratif{% endblock %}</title>
 
-    <!-- Bootstrap 5 -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{% static 'img/logo-compact.svg' %}"
+    />
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Icônes Bootstrap -->
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
       rel="stylesheet"
     />
-    <!-- CSS personnalisé -->
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 
     {% block extra_css %}{% endblock %}
   </head>
+
   <body>
-    <!-- ═══ NAVBAR ═══ -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
-      <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
-          📅 EDT Collaboratif
-        </a>
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <img
+            src="{% static 'img/logo.svg' %}"
+            alt="EDT Collaboratif"
+            class="sidebar-logo-icon custom-logo"
+          />
+        </div>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navMenu"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="sidebar-search">
+          <i class="bi bi-search sidebar-search-icon"></i>
 
-        <div class="collapse navbar-collapse" id="navMenu">
-          <ul class="navbar-nav me-auto">
+          <input
+            type="text"
+            placeholder="Rechercher…"
+            class="sidebar-search-input"
+          />
+        </div>
+
+        <nav class="sidebar-nav">
+          <span class="sidebar-nav-label">Navigation</span>
+
+          <ul>
             {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'dashboard' %}">
-                <i class="bi bi-house"></i> Dashboard
+
+            <li>
+              <a
+                href="{% url 'dashboard' %}"
+                class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+              >
+                <i class="bi bi-house-door"></i>
+                <span>Dashboard</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="bi bi-calendar3"></i> Calendrier
+
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-calendar3"></i>
+                <span>Calendrier</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="bi bi-people"></i> Groupes
+
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                <span>Groupes</span>
               </a>
             </li>
+
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-robot"></i>
+                <span>Assistant IA</span>
+              </a>
+            </li>
+
             {% endif %}
           </ul>
 
-          <ul class="navbar-nav ms-auto">
-            {% if user.is_authenticated %}
+          <span class="sidebar-nav-label mt-3">Configuration</span>
 
-            <!-- Badge notifications -->
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="bi bi-bell"></i>
+          <ul>
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-shield-check"></i>
+                <span>Sécurité</span>
               </a>
             </li>
 
-            <!-- Menu utilisateur -->
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                data-bs-toggle="dropdown"
-              >
-                <i class="bi bi-person-circle"></i> {{ user.username }}
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-gear"></i>
+                <span>Paramètres</span>
               </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- USER SECTION -->
+        {% if user.is_authenticated %}
+
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar">
+            {% if user.profil.avatar %}
+
+            <img src="{{ user.profil.avatar.url }}" alt="{{ user.username }}" />
+
+            {% else %}
+
+            <div class="avatar-placeholder-sidebar">
+              {{ user.username|slice:":1"|upper }}
+            </div>
+
+            {% endif %}
+          </div>
+
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">
+              {{ user.first_name|default:user.username }}
+            </span>
+
+            <span class="sidebar-user-role"> Étudiant </span>
+          </div>
+
+          <div class="sidebar-user-actions">
+            <a href="#" class="sidebar-user-btn">
+              <i class="bi bi-bell"></i>
+
+              {% if notifications_count %}
+              <span class="notif-dot"></span>
+              {% endif %}
+            </a>
+
+            <a href="#" class="sidebar-user-btn text-danger-soft">
+              <i class="bi bi-box-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        {% else %}
+
+        <div class="sidebar-auth-btns">
+          <a href="#" class="sidebar-btn-conn"> Connexion </a>
+
+          <a href="#" class="sidebar-btn-reg"> S'inscrire </a>
+        </div>
+
+        {% endif %}
+      </aside>
+
+      <!-- MAIN -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <button class="topbar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <div class="topbar-search">
+            <i class="bi bi-search"></i>
+
+            <input type="text" placeholder="Rechercher..." />
+          </div>
+
+          <div class="topbar-right">
+            {% if user.is_authenticated %}
+
+            <div class="dropdown">
+              <button class="topbar-avatar" data-bs-toggle="dropdown">
+                {% if user.profil.avatar %}
+
+                <img
+                  src="{{ user.profil.avatar.url }}"
+                  alt="{{ user.username }}"
+                />
+
+                {% else %}
+
+                <div class="avatar-placeholder-topbar">
+                  {{ user.username|slice:":1"|upper }}
+                </div>
+
+                {% endif %}
+              </button>
+
               <ul class="dropdown-menu dropdown-menu-end">
+                <li class="dropdown-header">{{ user.username }}</li>
+
                 <li>
-                  <a class="dropdown-item" href="#">
-                    <i class="bi bi-person"></i> Mon profil
-                  </a>
+                  <hr class="dropdown-divider" />
                 </li>
-                <li><hr class="dropdown-divider" /></li>
+
+                <li>
+                  <a class="dropdown-item" href="#"> Profil </a>
+                </li>
+
                 <li>
                   <a class="dropdown-item text-danger" href="#">
-                    <i class="bi bi-box-arrow-right"></i> Déconnexion
+                    Déconnexion
                   </a>
                 </li>
               </ul>
-            </li>
+            </div>
 
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="bi bi-box-arrow-in-right"></i> Connexion
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link btn btn-outline-light btn-sm px-3 ms-2"
-                href="#"
-              >
-                S'inscrire
-              </a>
-            </li>
             {% endif %}
-          </ul>
+          </div>
+        </header>
+        <!-- ═══════════════════════════════════════
+     FLOATING AI ASSISTANT
+═══════════════════════════════════════ -->
+<div class="ai-floating-wrapper">
+
+  <button class="ai-floating-btn" id="aiToggleBtn">
+    <div class="ai-pulse"></div>
+    <i class="bi bi-robot"></i>
+  </button>
+
+  <div class="ai-chat-box" id="aiChatBox">
+
+    <div class="ai-chat-header">
+      <div class="ai-chat-title">
+        <div class="ai-avatar">
+          <i class="bi bi-stars"></i>
+        </div>
+
+        <div>
+          <h6>AI Assistant</h6>
+          <span>En ligne</span>
         </div>
       </div>
-    </nav>
 
-    <!-- ═══ MESSAGES FLASH ═══ -->
-    <div class="container mt-3">
-      {% for message in messages %}
-      <div
-        class="alert alert-{{ message.tags }} alert-dismissible fade show"
-        role="alert"
-      >
-        {{ message }}
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-        ></button>
-      </div>
-      {% endfor %}
+      <button class="ai-close-btn" id="aiCloseBtn">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </div>
 
-    <!-- ═══ CONTENU PRINCIPAL ═══ -->
-    <main class="container mt-4 mb-5">{% block content %} {% endblock %}</main>
+    <div class="ai-chat-body">
 
-    <!-- ═══ FOOTER ═══ -->
-    <footer class="bg-dark text-muted text-center py-3 mt-5">
-      <small>EDT Collaboratif — EMSI 2025/2026</small>
-    </footer>
+      <div class="ai-message ai-message-bot">
+        Bonjour 👋<br>
+        Comment puis-je vous aider aujourd'hui ?
+      </div>
 
-    <!-- ═══ CHATBOT WIDGET (Manale + Ilyass + Rayane) ═══ -->
-    {% block chatbot %}{% endblock %}
+      <div class="ai-suggestions">
+        <button class="ai-suggestion-btn">Créer un événement</button>
+        <button class="ai-suggestion-btn">Afficher mon EDT</button>
+        <button class="ai-suggestion-btn">Mes groupes</button>
+      </div>
 
-    <!-- Bootstrap JS -->
+    </div>
+
+    <div class="ai-chat-footer">
+      <input
+        type="text"
+        placeholder="Écrire un message..."
+        class="ai-input"
+      >
+
+      <button class="ai-send-btn">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+        <!-- FLASH MESSAGES -->
+        {% if messages %}
+
+        <div class="container mt-3">
+          {% for message in messages %}
+
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+
+          {% endfor %}
+        </div>
+
+        {% endif %}
+
+        <!-- CONTENT -->
+        <main class="main-content">{% block content %}{% endblock %}</main>
+      </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+<script>
+
+const aiToggleBtn = document.getElementById('aiToggleBtn');
+const aiChatBox = document.getElementById('aiChatBox');
+const aiCloseBtn = document.getElementById('aiCloseBtn');
+
+if (aiToggleBtn) {
+
+  aiToggleBtn.addEventListener('click', () => {
+    aiChatBox.classList.toggle('show');
+  });
+
+}
+
+if (aiCloseBtn) {
+
+  aiCloseBtn.addEventListener('click', () => {
+    aiChatBox.classList.remove('show');
+  });
+
+}
+
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chatbot JS (Ilyass) -->
-    <script src="{% static 'js/chatbot.js' %}"></script>
+
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("sidebarOverlay");
+      const toggleBtn = document.getElementById("sidebarToggle");
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("open");
+          overlay.classList.toggle("show");
+        });
+
+        overlay.addEventListener("click", () => {
+          sidebar.classList.remove("open");
+          overlay.classList.remove("show");
+        });
+      }
+    </script>
 
     {% block extra_js %}{% endblock %}
   </body>

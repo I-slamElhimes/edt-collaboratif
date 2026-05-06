@@ -1,0 +1,350 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}EDT Collaboratif{% endblock %}</title>
+
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{% static 'img/logo-compact.svg' %}"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    {% block extra_css %}{% endblock %}
+  </head>
+
+  <body>
+    <div class="app-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <img
+            src="{% static 'img/logo.svg' %}"
+            alt="EDT Collaboratif"
+            class="sidebar-logo-icon custom-logo"
+          />
+        </div>
+
+        <div class="sidebar-search">
+          <i class="bi bi-search sidebar-search-icon"></i>
+
+          <input
+            type="text"
+            placeholder="Rechercher…"
+            class="sidebar-search-input"
+          />
+        </div>
+
+        <nav class="sidebar-nav">
+          <span class="sidebar-nav-label">Navigation</span>
+
+          <ul>
+            {% if user.is_authenticated %}
+
+            <li>
+              <a
+                href="{% url 'dashboard' %}"
+                class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+              >
+                <i class="bi bi-house-door"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-calendar3"></i>
+                <span>Calendrier</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                <span>Groupes</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-robot"></i>
+                <span>Assistant IA</span>
+              </a>
+            </li>
+
+            {% endif %}
+          </ul>
+
+          <span class="sidebar-nav-label mt-3">Configuration</span>
+
+          <ul>
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-shield-check"></i>
+                <span>Sécurité</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="sidebar-link">
+                <i class="bi bi-gear"></i>
+                <span>Paramètres</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- USER SECTION -->
+        {% if user.is_authenticated %}
+
+        <div class="sidebar-user">
+          <div class="sidebar-user-avatar">
+            {% if user.profil.avatar %}
+
+            <img src="{{ user.profil.avatar.url }}" alt="{{ user.username }}" />
+
+            {% else %}
+
+            <div class="avatar-placeholder-sidebar">
+              {{ user.username|slice:":1"|upper }}
+            </div>
+
+            {% endif %}
+          </div>
+
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name">
+              {{ user.first_name|default:user.username }}
+            </span>
+
+            <span class="sidebar-user-role"> Étudiant </span>
+          </div>
+
+          <div class="sidebar-user-actions">
+            <a href="#" class="sidebar-user-btn">
+              <i class="bi bi-bell"></i>
+
+              {% if notifications_count %}
+              <span class="notif-dot"></span>
+              {% endif %}
+            </a>
+
+            <a href="#" class="sidebar-user-btn text-danger-soft">
+              <i class="bi bi-box-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        {% else %}
+
+        <div class="sidebar-auth-btns">
+          <a href="#" class="sidebar-btn-conn"> Connexion </a>
+
+          <a href="#" class="sidebar-btn-reg"> S'inscrire </a>
+        </div>
+
+        {% endif %}
+      </aside>
+
+      <!-- MAIN -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <button class="topbar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <div class="topbar-search">
+            <i class="bi bi-search"></i>
+
+            <input type="text" placeholder="Rechercher..." />
+          </div>
+
+          <div class="topbar-right">
+            {% if user.is_authenticated %}
+
+            <div class="dropdown">
+              <button class="topbar-avatar" data-bs-toggle="dropdown">
+                {% if user.profil.avatar %}
+
+                <img
+                  src="{{ user.profil.avatar.url }}"
+                  alt="{{ user.username }}"
+                />
+
+                {% else %}
+
+                <div class="avatar-placeholder-topbar">
+                  {{ user.username|slice:":1"|upper }}
+                </div>
+
+                {% endif %}
+              </button>
+
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li class="dropdown-header">{{ user.username }}</li>
+
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+
+                <li>
+                  <a class="dropdown-item" href="#"> Profil </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item text-danger" href="#">
+                    Déconnexion
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {% endif %}
+          </div>
+        </header>
+        <!-- ═══════════════════════════════════════
+     FLOATING AI ASSISTANT
+═══════════════════════════════════════ -->
+<div class="ai-floating-wrapper">
+
+  <button class="ai-floating-btn" id="aiToggleBtn">
+    <div class="ai-pulse"></div>
+    <i class="bi bi-robot"></i>
+  </button>
+
+  <div class="ai-chat-box" id="aiChatBox">
+
+    <div class="ai-chat-header">
+      <div class="ai-chat-title">
+        <div class="ai-avatar">
+          <i class="bi bi-stars"></i>
+        </div>
+
+        <div>
+          <h6>AI Assistant</h6>
+          <span>En ligne</span>
+        </div>
+      </div>
+
+      <button class="ai-close-btn" id="aiCloseBtn">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="ai-chat-body">
+
+      <div class="ai-message ai-message-bot">
+        Bonjour 👋<br>
+        Comment puis-je vous aider aujourd'hui ?
+      </div>
+
+      <div class="ai-suggestions">
+        <button class="ai-suggestion-btn">Créer un événement</button>
+        <button class="ai-suggestion-btn">Afficher mon EDT</button>
+        <button class="ai-suggestion-btn">Mes groupes</button>
+      </div>
+
+    </div>
+
+    <div class="ai-chat-footer">
+      <input
+        type="text"
+        placeholder="Écrire un message..."
+        class="ai-input"
+      >
+
+      <button class="ai-send-btn">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+        <!-- FLASH MESSAGES -->
+        {% if messages %}
+
+        <div class="container mt-3">
+          {% for message in messages %}
+
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+
+          {% endfor %}
+        </div>
+
+        {% endif %}
+
+        <!-- CONTENT -->
+        <main class="main-content">{% block content %}{% endblock %}</main>
+      </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+<script>
+
+const aiToggleBtn = document.getElementById('aiToggleBtn');
+const aiChatBox = document.getElementById('aiChatBox');
+const aiCloseBtn = document.getElementById('aiCloseBtn');
+
+if (aiToggleBtn) {
+
+  aiToggleBtn.addEventListener('click', () => {
+    aiChatBox.classList.toggle('show');
+  });
+
+}
+
+if (aiCloseBtn) {
+
+  aiCloseBtn.addEventListener('click', () => {
+    aiChatBox.classList.remove('show');
+  });
+
+}
+
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("sidebarOverlay");
+      const toggleBtn = document.getElementById("sidebarToggle");
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+          sidebar.classList.toggle("open");
+          overlay.classList.toggle("show");
+        });
+
+        overlay.addEventListener("click", () => {
+          sidebar.classList.remove("open");
+          overlay.classList.remove("show");
+        });
+      }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

@@ -1,0 +1,1124 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EDT Collaboratif — Organisez. Collaborez. Avancez.</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --p1: #4f46e5;
+        --p2: #8b5cf6;
+        --p3: #a78bfa;
+        --dark: #0f172a;
+        --slate: #334155;
+        --muted: #64748b;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        font-family: "Inter", system-ui, sans-serif;
+        overflow-x: hidden;
+        background: #f8fafc;
+      }
+
+      /* ═══════════════════════════════════════════
+       HERO — PLEIN ÉCRAN AVEC PHOTO DE FOND
+    ═══════════════════════════════════════════ */
+      .hero {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background-image: url("{% static 'img/bg1.png' %}");
+        background-size: cover;
+        background-position: center 28%;
+        background-repeat: no-repeat;
+        transition: background-position 0.08s ease-out;
+      }
+
+      /* Overlay PLUS SOMBRE pour meilleure lisibilité */
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          112deg,
+          rgb(0, 0, 0) 7%,
+          rgba(0, 0, 0, 0.166) 36%,
+          rgba(0, 0, 0, 0) 62%,
+          rgba(239, 221, 221, 0.173) 100%
+        );
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      /* ═══════════════════════════════════════════
+       NAVBAR
+    ═══════════════════════════════════════════ */
+      .nav {
+        position: relative;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.95rem 3.5rem;
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        overflow: hidden;
+      }
+
+      /* Ligne animée sous la navbar avec coins arrondis */
+      .nav::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: -60%;
+        width: 40%;
+        height: 2.5px;
+        border-radius: 99px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--p2),
+          var(--p3),
+          var(--p1),
+          transparent
+        );
+        animation: navLine 3.5s ease-in-out infinite;
+        box-shadow: 0 0 12px rgba(139, 92, 246, 0.7);
+      }
+
+      @keyframes navLine {
+        0% {
+          left: -50%;
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          left: 110%;
+          opacity: 0;
+        }
+      }
+
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        flex-shrink: 0;
+        margin-left: -1.2rem;
+      }
+      .nav-logo svg {
+        height: 88px;
+        width: 450px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 8px rgb(209, 199, 233));
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        flex-shrink: 0;
+      }
+
+      .btn-conn {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        padding: 0.5rem 1.25rem;
+        border-radius: 8px;
+        border: 1.5px solid rgba(139, 92, 246, 0.35);
+        background: transparent;
+        transition: all 0.2s ease;
+        letter-spacing: 0.01em;
+      }
+      .btn-conn:hover {
+        border-color: var(--p3);
+        color: white;
+        background: rgba(139, 92, 246, 0.15);
+      }
+
+      .btn-ins {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: white;
+        text-decoration: none;
+        padding: 0.52rem 1.4rem;
+        border-radius: 50px;
+        background: linear-gradient(
+          135deg,
+          var(--p1) 0%,
+          var(--p2) 60%,
+          var(--p3) 100%
+        );
+        box-shadow: 0 3px 16px rgba(79, 70, 229, 0.32);
+        transition: all 0.25s ease;
+        letter-spacing: 0.01em;
+      }
+      .btn-ins:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 24px rgba(79, 70, 229, 0.44);
+        color: white;
+      }
+
+      /* ═══════════════════════════════════════════
+       CORPS DU HERO
+    ═══════════════════════════════════════════ */
+      .hero-body {
+        position: relative;
+        z-index: 2;
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 520px;
+        align-items: center;
+        height: 2400;
+        gap: 2rem;
+        padding: 0rem 4rem 3.5rem;
+        max-width: 2550px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      /* ═══════════════════════════════════════════
+       COLONNE GAUCHE
+    ═══════════════════════════════════════════ */
+      .hero-left {
+        display: flex;
+        flex-direction: column;
+        gap: 1.9rem;
+        padding-right: 1rem;
+      }
+
+      .hero-title {
+        font-size: clamp(2.8rem, 5vw, 4.2rem);
+        font-weight: 1000;
+        line-height: 1.07;
+        color: #ffffff;
+        letter-spacing: -0.038em;
+      }
+
+      .hero-title .accent {
+        display: block;
+        background: linear-gradient(
+          135deg,
+          var(--p1) 0%,
+          var(--p2) 55%,
+          var(--p3) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .hero-sub {
+        font-size: 1.02rem;
+        color: #e2e8f0;
+        line-height: 1.7;
+        max-width: 360px;
+        font-weight: 400;
+      }
+
+      .ia-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(100, 94, 220, 0.357);
+        border: 1px solid rgba(139, 92, 246, 0.35);
+        border-radius: 50px;
+        padding: 0.35rem 1rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #c7d2fe;
+        letter-spacing: 0.04em;
+        width: fit-content;
+      }
+      .ia-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--p2);
+        box-shadow: 0 0 8px rgba(139, 92, 246, 0.8);
+        animation: blink 2s ease-in-out infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.45;
+          transform: scale(1.35);
+        }
+      }
+
+      .btn-start {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #ffffff;
+        color: #0f172a;
+        text-decoration: none;
+        padding: 0.95rem 2.1rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 700;
+        width: fit-content;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+        letter-spacing: 0.01em;
+      }
+      .btn-start:hover {
+        background: #f1f5f9;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+        color: #0f172a;
+      }
+      .btn-start i {
+        font-size: 1.1rem;
+        opacity: 0.85;
+      }
+
+      .hero-left > * {
+        opacity: 0;
+        animation: fromLeft 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+      .hero-left > *:nth-child(1) {
+        animation-delay: 0.06s;
+      }
+      .hero-left > *:nth-child(2) {
+        animation-delay: 0.17s;
+      }
+      .hero-left > *:nth-child(3) {
+        animation-delay: 0.27s;
+      }
+      .hero-left > *:nth-child(4) {
+        animation-delay: 0.37s;
+      }
+
+      @keyframes fromLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-22px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* ═══════════════════════════════════════════
+       COLONNE DROITE — ÉVENTAIL DE CARTES (style photo)
+    ═══════════════════════════════════════════ */
+      .hero-right {
+        position: relative;
+        width: 100%;
+        height: 680px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Conteneur de la pile de cartes */
+      .card-stack {
+        position: relative;
+        width: 100%;
+        max-width: 1000px;
+        height: 100%;
+        max-height: 1000px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* CARTE DE BASE */
+      .fcard {
+        position: absolute;
+        width: 98%;
+        left: 10%;
+        background: rgba(12, 8, 30, 0.703);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1.5px solid rgba(139, 92, 246, 0.28);
+        border-radius: 0px 60px 0px 60px;
+        padding: 1.6rem 1.8rem;
+        box-shadow:
+          0 8px 32px rgba(139, 136, 185, 0.2),
+          0 2px 8px rgba(206, 197, 197, 0.4),
+          inset 0 1px 0 rgba(238, 230, 230, 0.06);
+        transition: all 0.8s cubic-bezier(0.34, 1.15, 0.64, 1);
+        cursor: pointer;
+        transform-origin: center bottom;
+        will-change: transform, opacity, z-index;
+        overflow: hidden;
+      }
+
+      /* Reflet violet sur chaque carte */
+      .fcard::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 20px;
+        background: radial-gradient(
+          ellipse at 25% 0%,
+          rgba(139, 92, 246, 0.1) 0%,
+          transparent 65%
+        );
+        pointer-events: none;
+      }
+
+      /* ── POSITIONS INITIALES EN ÉVENTAIL ── */
+      .fcard[data-index="3"] {
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%) rotate(-18deg)
+          translateX(-110px);
+        z-index: 1;
+        opacity: 0.72;
+        filter: blur(0.5px);
+      }
+      .fcard[data-index="2"] {
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%) rotate(-7deg)
+          translateX(-48px);
+        z-index: 2;
+        opacity: 0.82;
+        filter: blur(0.2px);
+      }
+      .fcard[data-index="1"] {
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%) rotate(5deg)
+          translateX(42px);
+        z-index: 3;
+        opacity: 0.88;
+      }
+      .fcard[data-index="0"] {
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%) rotate(15deg)
+          translateX(104px);
+        z-index: 4;
+        opacity: 1;
+      }
+
+      /* ── CARTE ACTIVE — sort de l'éventail, vient au centre ── */
+      .fcard.is-active {
+        z-index: 10 !important;
+        top: 50% !important;
+        transform: translateX(-50%) translateY(-50%) rotate(0deg) scale(1.06) !important;
+        opacity: 1 !important;
+        filter: blur(0) !important;
+        border-color: rgba(139, 92, 246, 0.65) !important;
+        border-width: 2px !important;
+        box-shadow:
+          0 0 0 1px rgba(139, 92, 246, 0.3),
+          0 25px 70px rgba(80, 30, 200, 0.5),
+          0 10px 30px rgba(139, 92, 246, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+      }
+
+      /* ── CARTES EN ARRIÈRE — restent en éventail ── */
+      .fcard.stack-2 {
+        top: 50% !important;
+        transform: translateX(-50%) translateY(-50%) rotate(-7deg)
+          translateX(-48px) !important;
+        z-index: 3 !important;
+        opacity: 0.82 !important;
+        filter: blur(0) !important;
+        cursor: pointer !important;
+      }
+      .fcard.stack-3 {
+        top: 50% !important;
+        transform: translateX(-50%) translateY(-50%) rotate(-18deg)
+          translateX(-110px) !important;
+        z-index: 2 !important;
+        opacity: 0.72 !important;
+        filter: blur(0.5px) !important;
+        cursor: pointer !important;
+      }
+      .fcard.stack-4 {
+        top: 50% !important;
+        transform: translateX(-50%) translateY(-50%) rotate(15deg)
+          translateX(104px) !important;
+        z-index: 1 !important;
+        opacity: 0.65 !important;
+        filter: blur(0.8px) !important;
+        cursor: pointer !important;
+      }
+
+      /* Hover sur cartes en arrière */
+      .fcard.stack-2:hover,
+      .fcard.stack-3:hover,
+      .fcard.stack-4:hover {
+        opacity: 0.95 !important;
+        filter: blur(0) !important;
+        border-color: rgba(139, 92, 246, 0.45) !important;
+      }
+
+      /* En-tête de carte : icône + titre */
+      .card-head {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(79, 70, 229, 0.3),
+          rgba(139, 92, 246, 0.2)
+        );
+        color: var(--p3);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+      }
+
+      .card-head h5 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #e2e8f0;
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+
+      /* Liste de fonctionnalités */
+      .feat-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .feat-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+        padding: 0.55rem 0;
+        font-size: 0.9rem;
+        color: #94a3b8;
+        font-weight: 500;
+        line-height: 1.5;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+      }
+      .feat-row + .feat-row {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .feat-row i {
+        font-size: 0.9rem;
+        color: var(--p3);
+        flex-shrink: 0;
+        margin-top: 2px;
+        opacity: 0.85;
+        transition: all 0.3s ease;
+      }
+
+      /* Effet hover sur les fonctionnalités de la carte active */
+      .fcard.is-active .feat-row:hover {
+        background: rgba(139, 92, 246, 0.08);
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
+        transform: translateX(3px);
+        color: #cbd5e1;
+      }
+      .fcard.is-active .feat-row:hover i {
+        color: var(--p2);
+        opacity: 1;
+        transform: scale(1.15);
+      }
+
+      /* Indicateur de progression */
+      .card-progress {
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 20;
+        align-items: center;
+      }
+      .progress-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        transition: all 0.4s ease;
+        cursor: pointer;
+        border: 1.5px solid rgba(255, 255, 255, 0.15);
+      }
+      .progress-dot.active {
+        background: var(--p2);
+        border-color: rgba(139, 92, 246, 0.6);
+        width: 24px;
+        border-radius: 99px;
+        box-shadow: 0 0 12px rgba(139, 92, 246, 0.7);
+      }
+      .progress-dot:hover {
+        background: rgba(255, 255, 255, 0.5);
+        transform: scale(1.2);
+      }
+
+      /* Compteur de temps — barre de progression */
+      .timer-bar-wrap {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        border-radius: 0 0 20px 20px;
+        background: rgba(255, 255, 255, 0.07);
+        overflow: hidden;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .fcard.is-active .timer-bar-wrap {
+        opacity: 1;
+      }
+      .timer-bar {
+        height: 100%;
+        width: 100%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, var(--p1), var(--p2), var(--p3));
+        transform-origin: left;
+        transform: scaleX(1);
+        box-shadow: 0 0 8px rgba(139, 92, 246, 0.8);
+      }
+
+      /* Indicateur texte timer */
+      .timer-indicator {
+        position: absolute;
+        top: -36px;
+        right: 5px;
+        font-size: 0.75rem;
+        color: rgba(139, 92, 246, 0.9);
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        background: rgba(15, 10, 40, 0.85);
+        padding: 0.25rem 0.65rem;
+        border-radius: 20px;
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        backdrop-filter: blur(8px);
+      }
+      .fcard.is-active .timer-indicator {
+        opacity: 1;
+      }
+
+      /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+      @media (max-width: 1200px) {
+        .hero-body {
+          grid-template-columns: 1fr 440px;
+          padding: 0rem 2.5rem 3.5rem;
+          gap: 1.5rem;
+        }
+        .hero-right {
+          height: 620px;
+        }
+      }
+
+      @media (max-width: 1100px) {
+        .hero-body {
+          grid-template-columns: 1fr;
+          padding: 0rem 2rem 3.5rem;
+        }
+        .hero-left {
+          padding-right: 0;
+          text-align: center;
+          align-items: center;
+        }
+        .hero-sub {
+          max-width: 500px;
+        }
+        .hero-right {
+          height: 560px;
+          max-width: 500px;
+          margin: 0 auto;
+          width: 100%;
+        }
+        .nav {
+          padding: 0.9rem 1.5rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 2.5rem;
+        }
+        .nav {
+          padding: 0.85rem 1.2rem;
+        }
+        .nav-logo svg {
+          height: 52px;
+        }
+        .hero-right {
+          height: 490px;
+          max-width: 420px;
+        }
+        .fcard {
+          padding: 1.2rem 1.3rem;
+          border-radius: 18px;
+        }
+        .feat-row {
+          font-size: 0.8rem;
+          padding: 0.45rem 0;
+        }
+        .card-head h5 {
+          font-size: 0.9rem;
+        }
+        .card-icon {
+          width: 40px;
+          height: 40px;
+          font-size: 1.1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="hero" id="heroSection">
+      <!-- ══════════ NAVBAR ══════════ -->
+      <nav class="nav">
+        <a href="{% url 'home' %}" class="nav-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160">
+            <defs>
+              <linearGradient id="bG" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color: #6366f1" />
+                <stop offset="100%" style="stop-color: #a78bfa" />
+              </linearGradient>
+              <linearGradient id="aG" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color: #4f46e5" />
+                <stop offset="100%" style="stop-color: #8b5cf6" />
+              </linearGradient>
+            </defs>
+            <circle
+              cx="62"
+              cy="80"
+              r="50"
+              fill="none"
+              stroke="url(#bG)"
+              stroke-width="2"
+            />
+            <path
+              d="M 12 80 A 50 50 0 0 1 112 80"
+              fill="none"
+              stroke="url(#aG)"
+              stroke-width="3.5"
+              stroke-linecap="round"
+              opacity="0.6"
+            />
+            <rect x="59" y="24" width="6" height="10" rx="3" fill="#4F46E5" />
+            <rect x="104" y="77" width="10" height="6" rx="3" fill="#6366F1" />
+            <rect x="59" y="126" width="6" height="10" rx="3" fill="#8B5CF6" />
+            <rect x="10" y="77" width="10" height="6" rx="3" fill="#A78BFA" />
+            <rect x="87" y="30" width="4" height="4" rx="2" fill="#CBD5E1" />
+            <rect x="87" y="126" width="4" height="4" rx="2" fill="#CBD5E1" />
+            <rect x="34" y="126" width="4" height="4" rx="2" fill="#CBD5E1" />
+            <rect x="34" y="30" width="4" height="4" rx="2" fill="#CBD5E1" />
+            <line
+              x1="62"
+              y1="80"
+              x2="36"
+              y2="50"
+              stroke="#1E293B"
+              stroke-width="3.5"
+              stroke-linecap="round"
+            />
+            <line
+              x1="62"
+              y1="80"
+              x2="82"
+              y2="55"
+              stroke="#6366F1"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+            <circle
+              cx="62"
+              cy="80"
+              r="7"
+              fill="white"
+              stroke="url(#bG)"
+              stroke-width="2.5"
+            />
+            <circle cx="62" cy="80" r="3" fill="url(#bG)" />
+            <circle cx="78" cy="45" r="5" fill="#8B5CF6" opacity="0.8" />
+            <circle cx="78" cy="45" r="2.5" fill="white" opacity="0.9" />
+            <text
+              x="135"
+              y="76"
+              font-family="'Inter','Segoe UI',sans-serif"
+              font-size="40"
+              font-weight="800"
+              fill="#FFFFFF"
+              letter-spacing="-1"
+            >
+              EDT
+            </text>
+            <rect
+              x="248"
+              y="56"
+              width="1.5"
+              height="30"
+              rx="1"
+              fill="rgba(255,255,255,0.3)"
+            />
+            <text
+              x="264"
+              y="76"
+              font-family="'Inter','Segoe UI',sans-serif"
+              font-size="40"
+              font-weight="300"
+              fill="rgba(255,255,255,0.7)"
+              letter-spacing="-0.5"
+            >
+              Collaboratif
+            </text>
+            <text
+              x="135"
+              y="108"
+              font-family="'Inter','Segoe UI',sans-serif"
+              font-size="10.5"
+              font-weight="600"
+              fill="rgba(255,255,255,0.35)"
+              letter-spacing="5"
+            >
+              TIME MANAGEMENT · POWERED BY AI
+            </text>
+            <rect
+              x="135"
+              y="118"
+              width="50"
+              height="2"
+              rx="1"
+              fill="url(#bG)"
+            />
+          </svg>
+        </a>
+
+        <div class="nav-actions">
+          <a href="#" class="btn-conn">Connexion</a>
+          <a href="#" class="btn-ins">S'inscrire</a>
+        </div>
+      </nav>
+
+      <!-- ══════════ CORPS ══════════ -->
+      <div class="hero-body">
+        <!-- ── GAUCHE ── -->
+        <div class="hero-left">
+          <div class="ia-badge">
+            <span class="ia-dot"></span>
+            PROPULSÉ PAR IA — GROQ LLAMA 3
+          </div>
+
+          <h1 class="hero-title">
+            Organisez.<br />
+            Collaborez.<br />
+            <span class="accent">Avancez.</span>
+          </h1>
+
+          <p class="hero-sub">
+            Un emploi du temps collaboratif pensé pour les étudiants —
+            planifiez, partagez et gérez vos événements en équipe, assisté par
+            intelligence artificielle.
+          </p>
+
+          <a href="#" class="btn-start">
+            <i class="bi bi-arrow-right-circle-fill"></i>
+            Commencer gratuitement
+          </a>
+        </div>
+
+        <!-- ── DROITE — GRANDES CARTES ÉTALÉES ── -->
+        <div class="hero-right">
+          <div class="card-stack" id="cardStack">
+            <!-- Carte 4 — Assistant IA (sera en bas de la pile) -->
+            <div class="fcard" data-index="3">
+              <div class="timer-indicator">30s</div>
+              <div class="timer-bar-wrap"><div class="timer-bar"></div></div>
+              <div class="card-head">
+                <div class="card-icon"><i class="bi bi-robot"></i></div>
+                <h5>Assistant IA — Chatbot Groq</h5>
+              </div>
+              <div class="feat-list">
+                <div class="feat-row">
+                  <i class="bi bi-chat-dots-fill"></i>
+                  Questions sur votre emploi du temps en langage naturel
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-lightbulb-fill"></i>
+                  Suggestions intelligentes de planification
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-journal-text"></i>
+                  Historique complet de vos conversations
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-database-fill"></i>
+                  API REST pour intégration et accès aux données
+                </div>
+              </div>
+            </div>
+
+            <!-- Carte 3 — Notifications & Sécurité -->
+            <div class="fcard" data-index="2">
+              <div class="timer-indicator">30s</div>
+              <div class="timer-bar-wrap"><div class="timer-bar"></div></div>
+              <div class="card-head">
+                <div class="card-icon"><i class="bi bi-bell-fill"></i></div>
+                <h5>Notifications & Sécurité</h5>
+              </div>
+              <div class="feat-list">
+                <div class="feat-row">
+                  <i class="bi bi-clock-fill"></i>
+                  Rappels automatiques avant chaque événement
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-shield-lock-fill"></i>
+                  Blocage automatique après 3 tentatives de connexion
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-check2-all"></i>
+                  Alertes pour invitations, partages et acceptations
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-person-fill"></i>
+                  Profil utilisateur avec avatar et biographie
+                </div>
+              </div>
+            </div>
+
+            <!-- Carte 2 — Groupes & Collaboration -->
+            <div class="fcard" data-index="1">
+              <div class="timer-indicator">30s</div>
+              <div class="timer-bar-wrap"><div class="timer-bar"></div></div>
+              <div class="card-head">
+                <div class="card-icon"><i class="bi bi-people-fill"></i></div>
+                <h5>Groupes & Collaboration</h5>
+              </div>
+              <div class="feat-list">
+                <div class="feat-row">
+                  <i class="bi bi-key-fill"></i>
+                  Créer un groupe avec code d'accès unique
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-envelope-arrow-up-fill"></i>
+                  Envoyer et gérer les invitations de groupe
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-person-check-fill"></i>
+                  Accepter ou refuser les demandes d'adhésion
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-calendar2-week-fill"></i>
+                  Visualiser l'emploi du temps commun du groupe
+                </div>
+              </div>
+            </div>
+
+            <!-- Carte 1 — Calendrier & Événements (sera en haut de la pile, active) -->
+            <div class="fcard" data-index="0">
+              <div class="timer-indicator">30s</div>
+              <div class="timer-bar-wrap"><div class="timer-bar"></div></div>
+              <div class="card-head">
+                <div class="card-icon"><i class="bi bi-calendar3"></i></div>
+                <h5>Calendrier & Événements</h5>
+              </div>
+              <div class="feat-list">
+                <div class="feat-row">
+                  <i class="bi bi-plus-circle-fill"></i>
+                  Créer des événements — cours, réunions, examens, personnel
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                  Détection automatique des conflits d'horaires
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-flag-fill"></i>
+                  Priorité haute, moyenne ou basse par événement
+                </div>
+                <div class="feat-row">
+                  <i class="bi bi-share-fill"></i>
+                  Partager un événement avec votre groupe
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Indicateurs de progression -->
+          <div class="card-progress" id="cardProgress">
+            <div class="progress-dot active" data-index="0"></div>
+            <div class="progress-dot" data-index="1"></div>
+            <div class="progress-dot" data-index="2"></div>
+            <div class="progress-dot" data-index="3"></div>
+          </div>
+        </div>
+        <!-- /hero-right -->
+      </div>
+      <!-- /hero-body -->
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Parallaxe douce au mouvement de la souris
+      const hero = document.getElementById("heroSection");
+      let ticking = false;
+      document.addEventListener("mousemove", function (e) {
+        if (!ticking) {
+          requestAnimationFrame(function () {
+            const x = (e.clientX / window.innerWidth - 0.5) * 9;
+            const y = (e.clientY / window.innerHeight - 0.5) * 5;
+            hero.style.backgroundPosition = `calc(50% + ${x}px) calc(28% + ${y}px)`;
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+
+      // Animation des cartes style SOLITAIRE — zoom une par une
+      (function () {
+        const cards = Array.from(document.querySelectorAll(".fcard"));
+        const progressDots = document.querySelectorAll(".progress-dot");
+        const totalCards = cards.length;
+        let currentIndex = 0;
+        let timerTimeout = null;
+        let timerBarAnim = null;
+        const DISPLAY_TIME = 30000; // 30 secondes
+
+        // Retire toutes les classes de position
+        function clearClasses(card) {
+          card.classList.remove(
+            "is-active",
+            "is-exiting",
+            "stack-2",
+            "stack-3",
+            "stack-4",
+          );
+        }
+
+        // Calcule la classe de pile pour une carte non-active
+        // relPos = 1,2,3 par rapport à la carte active
+        function stackClass(relPos) {
+          if (relPos === 1) return "stack-2";
+          if (relPos === 2) return "stack-3";
+          return "stack-4";
+        }
+
+        function updatePositions(activeIdx) {
+          cards.forEach((card, i) => {
+            clearClasses(card);
+            if (i === activeIdx) {
+              card.classList.add("is-active");
+            } else {
+              let rel = (i - activeIdx + totalCards) % totalCards;
+              card.classList.add(stackClass(rel));
+            }
+          });
+        }
+
+        function updateDots(activeIdx) {
+          progressDots.forEach((d, i) =>
+            d.classList.toggle("active", i === activeIdx),
+          );
+        }
+
+        // Démarre la barre de progression pour la carte active
+        function startTimerBar(cardIdx) {
+          const bar = cards[cardIdx].querySelector(".timer-bar");
+          const indicator = cards[cardIdx].querySelector(".timer-indicator");
+          if (!bar) return;
+
+          // Reset
+          bar.style.transition = "none";
+          bar.style.transform = "scaleX(1)";
+          void bar.offsetWidth; // reflow
+
+          // Animate
+          bar.style.transition = `transform ${DISPLAY_TIME}ms linear`;
+          bar.style.transform = "scaleX(0)";
+
+          // Countdown text
+          let timeLeft = DISPLAY_TIME / 1000;
+          if (indicator) indicator.textContent = `${timeLeft}s`;
+          const countInterval = setInterval(() => {
+            timeLeft--;
+            if (indicator) indicator.textContent = `${timeLeft}s`;
+            if (timeLeft <= 0) clearInterval(countInterval);
+          }, 1000);
+
+          return countInterval;
+        }
+
+        function activateCard(idx) {
+          // Annuler le timer précédent
+          if (timerTimeout) clearTimeout(timerTimeout);
+
+          currentIndex = idx;
+          updatePositions(idx);
+          updateDots(idx);
+
+          // Barre de progression
+          if (timerBarAnim) clearInterval(timerBarAnim);
+          timerBarAnim = startTimerBar(idx);
+
+          // Passer automatiquement à la suivante après 30s
+          timerTimeout = setTimeout(() => {
+            const next = (idx + 1) % totalCards;
+            activateCard(next);
+          }, DISPLAY_TIME);
+        }
+
+        // Clic sur cartes en arrière
+        cards.forEach((card, i) => {
+          card.addEventListener("click", function () {
+            if (i !== currentIndex) activateCard(i);
+          });
+        });
+
+        // Clic sur points de progression
+        progressDots.forEach((dot, i) => {
+          dot.addEventListener("click", () => {
+            if (i !== currentIndex) activateCard(i);
+          });
+        });
+
+        // Démarrage
+        activateCard(0);
+      })();
+    </script>
+  </body>
+</html>

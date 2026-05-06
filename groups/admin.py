@@ -3,10 +3,9 @@ from .models import Groupe, Invitation
 
 @admin.register(Groupe)
 class GroupeAdmin(admin.ModelAdmin):
-    list_display  = ['nom', 'proprietaire', 'code_acces', 'created_at']
-    search_fields = ['nom', 'proprietaire__username']
+    list_display = ['nom', 'proprietaire', 'code_acces', 'date_creation']
+    readonly_fields = ['code_acces']
 
 @admin.register(Invitation)
 class InvitationAdmin(admin.ModelAdmin):
-    list_display = ['groupe', 'expediteur', 'destinataire', 'statut']
-    list_filter  = ['statut']
+    list_display = ['groupe', 'expediteur', 'destinataire', 'statut', 'date_envoi']

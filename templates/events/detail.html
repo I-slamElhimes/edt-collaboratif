@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% block title %}{{ evt.titre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .page-header-left h2 {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 0.15rem;
+    letter-spacing: -0.02em;
+  }
+  .page-header-left p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* ═══════════════════════════════════════════════
+     DETAIL CARD
+  ═══════════════════════════════════════════════ */
+  .section-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--r-2xl);
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .section-card:hover {
+    border-color: rgba(139, 92, 246, 0.2);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .event-banner {
+    padding: 1.5rem 1.6rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .event-banner-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+  }
+  .badge-prive {
+    background: rgba(0, 0, 0, 0.3);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+  }
+
+  /* ═══════════════════════════════════════════════
+     DETAIL ROWS
+  ═══════════════════════════════════════════════ */
+  .detail-body {
+    padding: 1.4rem 1.6rem;
+  }
+  .detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(79, 70, 229, 0.12);
+    border: 1px solid rgba(79, 70, 229, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a5b4fc;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .detail-content {}
+  .detail-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.2rem;
+  }
+  .detail-value {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  /* ═══════════════════════════════════════════════
+     PRIORITY PILL
+  ═══════════════════════════════════════════════ */
+  .priorite-pill {
+    padding: 3px 11px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .priorite-pill.haute  { background: rgba(239, 68, 68, 0.15);  color: #fca5a5; }
+  .priorite-pill.moyenne{ background: rgba(245, 158, 11, 0.15); color: #fcd34d; }
+  .priorite-pill.basse  { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+
+  /* ═══════════════════════════════════════════════
+     FOOTER ACTIONS
+  ═══════════════════════════════════════════════ */
+  .detail-footer {
+    padding: 1.2rem 1.6rem;
+    border-top: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .quick-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0.55rem 1.1rem;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.22s ease;
+    border: 1.5px solid var(--border-accent);
+    color: #c4b5fd;
+    background: rgba(79, 70, 229, 0.08);
+    letter-spacing: 0.01em;
+    cursor: pointer;
+  }
+  .quick-btn:hover {
+    background: rgba(79, 70, 229, 0.18);
+    border-color: var(--p3);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.22);
+  }
+  .quick-btn.warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #fcd34d;
+  }
+  .quick-btn.warning:hover {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.6);
+    color: white;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+  }
+  .quick-btn.danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+  }
+  .quick-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.6);
+    color: white;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
+  }
+  .ms-auto { margin-left: auto; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="page-header-left">
+    <h2><i class="bi bi-calendar-event"></i> Détail de l'événement</h2>
+    <p>Consultez et gérez les informations</p>
+  </div>
+  <a href="{% url 'events:calendrier' %}" class="quick-btn">
+    <i class="bi bi-arrow-left"></i> Retour au calendrier
+  </a>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="section-card">
+
+      <!-- Bannière couleur de l'événement -->
+      <div class="event-banner" style="background: {{ evt.couleur }}">
+        <h2 class="event-banner-title">{{ evt.titre }}</h2>
+        {% if evt.est_prive %}
+          <span class="badge-prive"><i class="bi bi-lock-fill"></i> Privé</span>
+        {% endif %}
+      </div>
+
+      <!-- Détails -->
+      <div class="detail-body">
+
+        <div class="detail-row">
+          <div class="detail-icon"><i class="bi bi-calendar3"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">Date</div>
+            <div class="detail-value">{{ evt.date|date:"l d F Y" }}</div>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-icon"><i class="bi bi-clock"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">Horaire</div>
+            <div class="detail-value">{{ evt.heure_debut|time:"H:i" }} – {{ evt.heure_fin|time:"H:i" }}</div>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-icon"><i class="bi bi-tag"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">Type</div>
+            <div class="detail-value">{{ evt.get_type_evt_display }}</div>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-icon"><i class="bi bi-bar-chart"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">Priorité</div>
+            <div class="detail-value">
+              <span class="priorite-pill {{ evt.priorite|lower }}">
+                <i class="bi bi-circle-fill" style="font-size: 0.45rem"></i>
+                {{ evt.get_priorite_display }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {% if evt.lieu %}
+        <div class="detail-row">
+          <div class="detail-icon"><i class="bi bi-geo-alt"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">Lieu</div>
+            <div class="detail-value">{{ evt.lieu }}</div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if evt.description %}
+        <div class="detail-row">
+          <div class="detail-icon"><i class="bi bi-text-left"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">Description</div>
+            <div class="detail-value">{{ evt.description }}</div>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+
+      <!-- Actions -->
+      <div class="detail-footer">
+        <a href="{% url 'events:modifier' evt.pk %}" class="quick-btn warning">
+          <i class="bi bi-pencil"></i> Modifier
+        </a>
+        <a href="{% url 'events:supprimer' evt.pk %}" class="quick-btn danger">
+          <i class="bi bi-trash"></i> Supprimer
+        </a>
+        <a href="{% url 'events:calendrier' %}" class="quick-btn ms-auto">
+          <i class="bi bi-arrow-left"></i> Retour
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -72,7 +72,7 @@
             </li>
 
             <li>
-              <a href="#" class="sidebar-link">
+              <a href="{% url 'events:calendrier' %}" class="sidebar-link {% if request.resolver_match.url_name == 'calendrier' %}active{% endif %}">
                 <i class="bi bi-calendar3"></i>
                 <span>Calendrier</span>
               </a>

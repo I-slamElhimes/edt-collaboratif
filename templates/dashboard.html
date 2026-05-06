@@ -431,14 +431,14 @@ Collaboratif{% endblock %} {% block extra_css %}
 
 <!-- ══ ACTIONS RAPIDES ══ -->
 <div class="quick-actions animate-in anim-delay-1">
-  <a href="#" class="quick-btn primary"
+  <a href="{% url 'events:creer' %}" class="quick-btn primary"
     ><i class="bi bi-plus-lg"></i> Créer un événement</a
   >
-  <a href="#" class="quick-btn"
+  <a href="#" class="quick-btn" title="Fonctionnalité à venir"
     ><i class="bi bi-people"></i> Rejoindre un groupe</a
   >
-  <a href="#" class="quick-btn"><i class="bi bi-robot"></i> Assistant IA</a>
-  <a href="#" class="quick-btn"><i class="bi bi-share"></i> Partager mon EDT</a>
+  <a href="#" class="quick-btn" title="Fonctionnalité à venir"><i class="bi bi-robot"></i> Assistant IA</a>
+  <a href="#" class="quick-btn" title="Fonctionnalité à venir"><i class="bi bi-share"></i> Partager mon EDT</a>
 </div>
 
 <!-- ══ STATS ══ -->
@@ -491,7 +491,7 @@ Collaboratif{% endblock %} {% block extra_css %}
         <h5>
           <i class="bi bi-calendar-week"></i> Calendrier — Semaine actuelle
         </h5>
-        <a href="#" class="btn btn-outline-primary btn-sm px-3">Voir tout</a>
+        <a href="{% url 'events:calendrier' %}" class="btn btn-outline-primary btn-sm px-3">Voir tout</a>
       </div>
       <div class="week-calendar" id="weekCalendar">
         <!-- Généré par JS -->
@@ -502,7 +502,7 @@ Collaboratif{% endblock %} {% block extra_css %}
     <div class="section-card animate-in anim-delay-6">
       <div class="section-header">
         <h5><i class="bi bi-clock-history"></i> Prochains événements</h5>
-        <a href="#" class="btn btn-outline-primary btn-sm px-3">Voir tout</a>
+        <a href="{% url 'events:liste' %}" class="btn btn-outline-primary btn-sm px-3">Voir tout</a>
       </div>
       <div class="section-body">
         {% if prochains_evenements %} {% for evt in prochains_evenements %}
@@ -515,8 +515,7 @@ Collaboratif{% endblock %} {% block extra_css %}
             <p class="event-title">{{ evt.titre }}</p>
             <div class="event-meta">
               <span
-                ><i class="bi bi-clock"></i>{{ evt.heure_debut }} – {{
-                evt.heure_fin }}</span
+                ><i class="bi bi-clock"></i>{{ evt.heure_debut|time:"H:i" }} – {{ evt.heure_fin|time:"H:i" }}</span
               >
               {% if evt.lieu %}<span
                 ><i class="bi bi-geo-alt"></i>{{ evt.lieu }}</span
@@ -533,7 +532,7 @@ Collaboratif{% endblock %} {% block extra_css %}
           <div class="empty-icon"><i class="bi bi-calendar-plus"></i></div>
           <h6>Aucun événement à venir</h6>
           <p>Ajoutez votre premier cours ou réunion</p>
-          <a href="#" class="quick-btn primary d-inline-flex"
+          <a href="{% url 'events:creer' %}" class="quick-btn primary d-inline-flex"
             ><i class="bi bi-plus-lg"></i> Créer un événement</a
           >
         </div>
@@ -568,7 +567,7 @@ Collaboratif{% endblock %} {% block extra_css %}
               {{ evt.titre }}
             </p>
             <div class="event-meta">
-              <span><i class="bi bi-clock"></i>{{ evt.heure_debut }}</span>
+              <span><i class="bi bi-clock"></i>{{ evt.heure_debut|time:"H:i" }}</span>
             </div>
           </div>
           <i
@@ -595,6 +594,7 @@ Collaboratif{% endblock %} {% block extra_css %}
             href="#"
             class="quick-btn w-100 justify-content-center"
             style="border-radius: 12px; padding: 0.65rem"
+            title="Fonctionnalité à venir"
           >
             <i class="bi bi-people"></i> Rejoindre un groupe
           </a>

@@ -4,7 +4,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>{% block title %}EDT Collaboratif{% endblock %}</title>
 
     <link
@@ -13,22 +12,23 @@
       href="{% static 'img/logo-compact.svg' %}"
     />
 
+    <!-- CSS Bootstrap 5 -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
       rel="stylesheet"
     />
-
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
 
+    <!-- Tes fichiers CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}" />
 
     {% block extra_css %}{% endblock %}
   </head>
@@ -45,22 +45,10 @@
           />
         </div>
 
-        <div class="sidebar-search">
-          <i class="bi bi-search sidebar-search-icon"></i>
-
-          <input
-            type="text"
-            placeholder="Rechercher…"
-            class="sidebar-search-input"
-          />
-        </div>
-
         <nav class="sidebar-nav">
           <span class="sidebar-nav-label">Navigation</span>
-
           <ul>
             {% if user.is_authenticated %}
-
             <li>
               <a
                 href="{% url 'dashboard' %}"
@@ -70,105 +58,78 @@
                 <span>Dashboard</span>
               </a>
             </li>
-
             <li>
-              <a href="#" class="sidebar-link">
-                <i class="bi bi-calendar3"></i>
-                <span>Calendrier</span>
-              </a>
+              <a href="#" class="sidebar-link"
+                ><i class="bi bi-calendar3"></i><span>Calendrier</span></a
+              >
             </li>
-
             <li>
-              <a href="#" class="sidebar-link">
-                <i class="bi bi-people"></i>
-                <span>Groupes</span>
-              </a>
+              <a href="#" class="sidebar-link"
+                ><i class="bi bi-people"></i><span>Groupes</span></a
+              >
             </li>
-
             <li>
-              <a href="#" class="sidebar-link">
+              <a
+                href="javascript:void(0)"
+                onclick="
+                  document.getElementById('aiChatBox').classList.toggle('show')
+                "
+                class="sidebar-link"
+              >
                 <i class="bi bi-robot"></i>
                 <span>Assistant IA</span>
               </a>
             </li>
-
             {% endif %}
-          </ul>
-
-          <span class="sidebar-nav-label mt-3">Configuration</span>
-
-          <ul>
-            <li>
-              <a href="#" class="sidebar-link">
-                <i class="bi bi-shield-check"></i>
-                <span>Sécurité</span>
-              </a>
-            </li>
-
-            <li>
-              <a href="#" class="sidebar-link">
-                <i class="bi bi-gear"></i>
-                <span>Paramètres</span>
-              </a>
-            </li>
           </ul>
         </nav>
 
-        <!-- USER SECTION -->
+        <!-- USER SECTION SIDEBAR (Bas de la sidebar) -->
         {% if user.is_authenticated %}
-
         <div class="sidebar-user">
           <div class="sidebar-user-avatar">
             {% if user.profil.avatar %}
-
             <img src="{{ user.profil.avatar.url }}" alt="{{ user.username }}" />
-
             {% else %}
-
             <div class="avatar-placeholder-sidebar">
               {{ user.username|slice:":1"|upper }}
             </div>
-
             {% endif %}
           </div>
-
           <div class="sidebar-user-info">
-            <span class="sidebar-user-name">
-              {{ user.first_name|default:user.username }}
-            </span>
-
-            <span class="sidebar-user-role"> Étudiant </span>
+            <span class="sidebar-user-name"
+              >{{ user.first_name|default:user.username }}</span
+            >
+            <span class="sidebar-user-role">Étudiant</span>
           </div>
-
           <div class="sidebar-user-actions">
-            <a href="#" class="sidebar-user-btn">
-              <i class="bi bi-bell"></i>
-
-              {% if notifications_count %}
-              <span class="notif-dot"></span>
-              {% endif %}
-            </a>
-
-            <a href="#" class="sidebar-user-btn text-danger-soft">
+            <a
+              href="{% url 'accounts:deconnexion' %}"
+              class="sidebar-user-btn text-danger-soft"
+              title="Déconnexion"
+            >
               <i class="bi bi-box-arrow-right"></i>
             </a>
           </div>
         </div>
-
         {% else %}
-
-        <div class="sidebar-auth-btns">
-          <a href="#" class="sidebar-btn-conn"> Connexion </a>
-
-          <a href="#" class="sidebar-btn-reg"> S'inscrire </a>
+        <div class="sidebar-auth-btns p-3">
+          <a
+            href="{% url 'accounts:connexion' %}"
+            class="btn btn-outline-light w-100 mb-2"
+            >Connexion</a
+          >
+          <a
+            href="{% url 'accounts:inscription' %}"
+            class="btn btn-primary w-100"
+            >S'inscrire</a
+          >
         </div>
-
         {% endif %}
       </aside>
 
-      <!-- MAIN -->
+      <!-- MAIN AREA -->
       <div class="main-area">
-        <!-- TOPBAR -->
         <header class="topbar">
           <button class="topbar-toggle" id="sidebarToggle">
             <i class="bi bi-list"></i>
@@ -176,173 +137,214 @@
 
           <div class="topbar-search">
             <i class="bi bi-search"></i>
-
             <input type="text" placeholder="Rechercher..." />
           </div>
 
           <div class="topbar-right">
             {% if user.is_authenticated %}
-
             <div class="dropdown">
-              <button class="topbar-avatar" data-bs-toggle="dropdown">
+              <!-- BOUTON M (Avatar de la Topbar) -->
+              <button
+                class="topbar-avatar border-0"
+                type="button"
+                id="userMenu"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
                 {% if user.profil.avatar %}
-
                 <img
                   src="{{ user.profil.avatar.url }}"
                   alt="{{ user.username }}"
                 />
-
                 {% else %}
-
                 <div class="avatar-placeholder-topbar">
                   {{ user.username|slice:":1"|upper }}
                 </div>
-
                 {% endif %}
               </button>
 
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li class="dropdown-header">{{ user.username }}</li>
-
-                <li>
-                  <hr class="dropdown-divider" />
+              <!-- MENU DÉROULANT DU BOUTON M -->
+              <ul
+                class="dropdown-menu dropdown-menu-end shadow border-0 bg-dark"
+                aria-labelledby="userMenu"
+              >
+                <li class="dropdown-header text-white-50">
+                  Connecté en tant que {{ user.username }}
                 </li>
-
+                <li><hr class="dropdown-divider border-secondary" /></li>
                 <li>
-                  <a class="dropdown-item" href="#"> Profil </a>
+                  <a
+                    class="dropdown-item text-white"
+                    href="{% url 'accounts:profil' %}"
+                    ><i class="bi bi-person me-2"></i>Mon Profil</a
+                  >
                 </li>
-
                 <li>
-                  <a class="dropdown-item text-danger" href="#">
-                    Déconnexion
-                  </a>
+                  <a
+                    class="dropdown-item text-danger"
+                    href="{% url 'accounts:deconnexion' %}"
+                    ><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a
+                  >
                 </li>
               </ul>
             </div>
-
             {% endif %}
           </div>
         </header>
-        <!-- ═══════════════════════════════════════
-     FLOATING AI ASSISTANT
-═══════════════════════════════════════ -->
-<div class="ai-floating-wrapper">
 
-  <button class="ai-floating-btn" id="aiToggleBtn">
-    <div class="ai-pulse"></div>
-    <i class="bi bi-robot"></i>
-  </button>
-
-  <div class="ai-chat-box" id="aiChatBox">
-
-    <div class="ai-chat-header">
-      <div class="ai-chat-title">
-        <div class="ai-avatar">
-          <i class="bi bi-stars"></i>
-        </div>
-
-        <div>
-          <h6>AI Assistant</h6>
-          <span>En ligne</span>
-        </div>
-      </div>
-
-      <button class="ai-close-btn" id="aiCloseBtn">
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </div>
-
-    <div class="ai-chat-body">
-
-      <div class="ai-message ai-message-bot">
-        Bonjour 👋<br>
-        Comment puis-je vous aider aujourd'hui ?
-      </div>
-
-      <div class="ai-suggestions">
-        <button class="ai-suggestion-btn">Créer un événement</button>
-        <button class="ai-suggestion-btn">Afficher mon EDT</button>
-        <button class="ai-suggestion-btn">Mes groupes</button>
-      </div>
-
-    </div>
-
-    <div class="ai-chat-footer">
-      <input
-        type="text"
-        placeholder="Écrire un message..."
-        class="ai-input"
-      >
-
-      <button class="ai-send-btn">
-        <i class="bi bi-send-fill"></i>
-      </button>
-    </div>
-
-  </div>
-
-</div>
-
-        <!-- FLASH MESSAGES -->
+        <!-- MESSAGES DJANGO (Alertes succès/erreur) -->
         {% if messages %}
-
-        <div class="container mt-3">
+        <div
+          class="container-fluid px-4 mt-3"
+          style="position: relative; z-index: 10"
+        >
           {% for message in messages %}
-
-          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-
+          <div
+            class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm"
+            role="alert"
+          >
+            {{ message }}
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
           {% endfor %}
         </div>
-
         {% endif %}
 
-        <!-- CONTENT -->
+        <!-- CONTENU DES PAGES (Dashboard, Profil, etc.) -->
         <main class="main-content">{% block content %}{% endblock %}</main>
       </div>
     </div>
 
+    <!-- CHATBOT IA (Widget Flottant) -->
+    {% if user.is_authenticated %}
+    <div class="ai-floating-wrapper">
+      <button class="ai-floating-btn" id="aiToggleBtn">
+        <i class="bi bi-robot"></i>
+      </button>
+      <div class="ai-chat-box" id="aiChatBox">
+        <div class="ai-chat-header">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-stars text-primary me-2"></i>
+            <span>AI Assistant</span>
+          </div>
+          <button id="aiCloseBtn" class="border-0 bg-transparent text-white">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div class="ai-chat-body" id="aiChatBody">
+          <div class="ai-message ai-message-bot">
+            Bonjour {{ user.first_name }} ! 👋 Comment puis-je vous aider ?
+          </div>
+        </div>
+        <div class="ai-chat-footer">
+          <input
+            type="text"
+            id="aiInput"
+            placeholder="Posez une question..."
+            autocomplete="off"
+          />
+          <button id="aiSendBtn"><i class="bi bi-send-fill"></i></button>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-<script>
 
-const aiToggleBtn = document.getElementById('aiToggleBtn');
-const aiChatBox = document.getElementById('aiChatBox');
-const aiCloseBtn = document.getElementById('aiCloseBtn');
-
-if (aiToggleBtn) {
-
-  aiToggleBtn.addEventListener('click', () => {
-    aiChatBox.classList.toggle('show');
-  });
-
-}
-
-if (aiCloseBtn) {
-
-  aiCloseBtn.addEventListener('click', () => {
-    aiChatBox.classList.remove('show');
-  });
-
-}
-
-</script>
+    <!-- SCRIPTS JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+      // 1. CSRF Token pour sécuriser les envois au serveur
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1),
+              );
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      // 2. Sidebar (Menu Mobile)
       const sidebar = document.getElementById("sidebar");
       const overlay = document.getElementById("sidebarOverlay");
       const toggleBtn = document.getElementById("sidebarToggle");
-
       if (toggleBtn) {
-        toggleBtn.addEventListener("click", () => {
+        toggleBtn.onclick = () => {
           sidebar.classList.toggle("open");
           overlay.classList.toggle("show");
-        });
-
-        overlay.addEventListener("click", () => {
+        };
+        overlay.onclick = () => {
           sidebar.classList.remove("open");
           overlay.classList.remove("show");
-        });
+        };
       }
+
+      // 3. Chatbot (Ouvrir / Fermer)
+      const aiToggleBtn = document.getElementById("aiToggleBtn");
+      const aiChatBox = document.getElementById("aiChatBox");
+      const aiCloseBtn = document.getElementById("aiCloseBtn");
+      if (aiToggleBtn)
+        aiToggleBtn.onclick = () => aiChatBox.classList.toggle("show");
+      if (aiCloseBtn)
+        aiCloseBtn.onclick = () => aiChatBox.classList.remove("show");
+
+      // 4. Chatbot (Envoi de message)
+      async function sendMessage() {
+        const input = document.getElementById("aiInput");
+        const body = document.getElementById("aiChatBody");
+        if (!input || !body || !input.value.trim()) return;
+
+        const msg = input.value.trim();
+        // Ajouter le message de l'utilisateur à l'écran
+        body.innerHTML += `<div class="ai-message ai-message-user">${msg}</div>`;
+        input.value = "";
+        body.scrollTop = body.scrollHeight;
+
+        // Ajouter la bulle de chargement "..."
+        const loading = document.createElement("div");
+        loading.className = "ai-message ai-message-bot";
+        loading.textContent = "...";
+        body.appendChild(loading);
+
+        try {
+          const res = await fetch("/chatbot/", {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": getCookie("csrftoken"),
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `message=${encodeURIComponent(msg)}`,
+          });
+          const data = await res.json();
+          loading.textContent = data.reply || data.error;
+        } catch (e) {
+          loading.textContent = "Erreur de connexion.";
+        }
+        body.scrollTop = body.scrollHeight;
+      }
+
+      // Lier le bouton envoyer et la touche Entrée
+      const sendBtn = document.getElementById("aiSendBtn");
+      if (sendBtn) sendBtn.onclick = sendMessage;
+      const aiInput = document.getElementById("aiInput");
+      if (aiInput)
+        aiInput.onkeypress = (e) => {
+          if (e.key === "Enter") sendMessage();
+        };
     </script>
 
     {% block extra_js %}{% endblock %}

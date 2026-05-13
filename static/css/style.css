@@ -1210,55 +1210,80 @@ body::before {
 /* ═══════════════════════════════════════════════
    DROPDOWN (Bootstrap override)
    ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   DROPDOWN (Version Corrigée pour Manale)
+   ═══════════════════════════════════════ */
+
 .dropdown-menu {
-  background: rgba(15, 20, 40, 0.95) !important;
+  background: rgba(
+    15,
+    20,
+    40,
+    0.98
+  ) !important; /* Un peu plus opaque pour mieux voir */
   backdrop-filter: blur(20px);
-  border: 1px solid var(--border) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-radius: var(--r-lg) !important;
-  box-shadow: var(--shadow-lg) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8) !important; /* Ombre portée plus forte */
   padding: 0.5rem !important;
   min-width: 220px;
-  animation: dropdownIn 0.18s ease;
+
+  /* LES LIGNES MAGIQUES QUI CORRIGENT TON PROBLÈME : */
+  z-index: 99999 !important; /* Passe devant tout le Dashboard */
+  position: absolute !important; /* Sort du flux de la barre */
+  display: none; /* Caché par défaut, Bootstrap l'affichera */
+
+  animation: dropdownIn 0.18s ease-out;
 }
+
+/* On force l'affichage quand Bootstrap ajoute la classe .show */
+.dropdown-menu.show {
+  display: block !important;
+}
+
+/* FIX DU PARENT : On empêche la barre du haut de couper le menu */
+.topbar {
+  overflow: visible !important;
+  z-index: 2000 !important; /* La barre doit être au-dessus du contenu */
+}
+
+/* FIX DU CONTENEUR DROITE : Pour que le menu ne reste pas coincé */
+.topbar-right {
+  overflow: visible !important;
+}
+
 @keyframes dropdownIn {
   from {
     opacity: 0;
-    transform: translateY(-8px) scale(0.97);
+    transform: translateY(-12px) scale(0.95);
   }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
+
 .dropdown-item {
   border-radius: var(--r-sm);
-  padding: 0.55rem 0.8rem;
-  font-size: 0.85rem;
+  padding: 0.65rem 0.8rem; /* Un peu plus d'espace pour cliquer */
+  font-size: 0.88rem;
   font-weight: 500;
   color: var(--text-secondary) !important;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   transition: all 0.15s;
 }
+
 .dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: var(--text-primary) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important; /* Texte bien blanc au survol */
+  transform: translateX(4px); /* Petit effet de mouvement à droite */
 }
-.dropdown-item.text-danger {
-  color: var(--danger) !important;
-}
+
 .dropdown-item.text-danger:hover {
-  background: rgba(239, 68, 68, 0.1) !important;
-}
-.dropdown-header {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  padding: 0.35rem 0.8rem;
-}
-.dropdown-divider {
-  border-color: var(--border) !important;
-  margin: 0.3rem 0 !important;
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #fca5a5 !important;
 }
 
 /* ═══════════════════════════════════════════════

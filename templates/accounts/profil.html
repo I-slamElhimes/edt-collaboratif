@@ -1,0 +1,179 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Mon Profil — EDT
+Collaboratif{% endblock %} {% block content %}
+<div class="container-fluid px-4 animate-in">
+  <!-- HEADER PROFIL -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="fw-800 text-white mb-1">Mon Profil</h2>
+      <p class="text-secondary small">
+        Gérez vos informations personnelles et votre sécurité.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- COLONNE GAUCHE : APPERÇU -->
+    <div class="col-lg-4">
+      <div class="section-card text-center p-5">
+        <div class="position-relative d-inline-block mb-4">
+          {% if user.profil.avatar %}
+          <img
+            src="{{ user.profil.avatar.url }}"
+            class="rounded-circle shadow-lg border border-4 border-accent"
+            style="width: 150px; height: 150px; object-fit: cover"
+          />
+          {% else %}
+          <div
+            class="rounded-circle bg-gradient-primary shadow-glow d-flex align-items-center justify-content-center fw-bold text-white"
+            style="width: 150px; height: 150px; font-size: 4rem"
+          >
+            {{ user.username|slice:":1"|upper }}
+          </div>
+          {% endif %}
+          <span
+            class="position-absolute bottom-0 end-0 badge rounded-pill bg-success p-2 border border-3 border-dark"
+          >
+            <span class="visually-hidden">En ligne</span>
+          </span>
+        </div>
+        <h3 class="text-white fw-bold mb-1">
+          {{ user.first_name }} {{ user.last_name }}
+        </h3>
+        <p class="text-primary small fw-bold mb-3">@{{ user.username }}</p>
+        <div class="d-flex justify-content-center gap-2">
+          <span class="ia-badge">STUDENT ID: #{{ user.id|add:"2025" }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLONNE DROITE : FORMULAIRE -->
+    <div class="col-lg-8">
+      <div class="section-card">
+        <div class="section-header">
+          <h5>
+            <i class="bi bi-person-lines-fill"></i> Informations personnelles
+          </h5>
+        </div>
+        <div class="section-body p-4">
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row g-3">
+              <!-- Nom & Prénom (Lecture seule ici pour le style) -->
+              <div class="col-md-6">
+                <label class="stat-label mb-2">Prénom</label>
+                <input
+                  type="text"
+                  class="form-control bg-hover border-0 text-white-50"
+                  value="{{ user.first_name }}"
+                  readonly
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="stat-label mb-2">Nom</label>
+                <input
+                  type="text"
+                  class="form-control bg-hover border-0 text-white-50"
+                  value="{{ user.last_name }}"
+                  readonly
+                />
+              </div>
+
+              <!-- Biographie -->
+              <div class="col-12 mt-4">
+                <label class="stat-label mb-2">Ma Biographie</label>
+                {{ form.bio }}
+              </div>
+
+              <!-- Upload Photo -->
+              <div class="col-12 mt-4">
+                <label class="stat-label mb-2"
+                  >Changer ma photo de profil</label
+                >
+                <div class="custom-file-upload">
+                  <input
+                    type="file"
+                    name="avatar"
+                    id="avatar"
+                    class="d-none"
+                    accept="image/*"
+                  />
+                  <label
+                    for="avatar"
+                    class="quick-btn w-100 justify-content-center py-3"
+                  >
+                    <i class="bi bi-cloud-arrow-up me-2"></i> Choisir une
+                    nouvelle image
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5">
+              <button
+                type="submit"
+                class="quick-btn primary px-5 py-3 w-100 shadow-glow"
+              >
+                Sauvegarder les modifications
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- CARD SÉCURITÉ -->
+      <div class="section-card mt-4 border-warning-subtle">
+        <div
+          class="section-body p-4 d-flex justify-content-between align-items-center"
+        >
+          <div>
+            <h5 class="text-warning mb-1">
+              <i class="bi bi-shield-lock"></i> Sécurité du compte
+            </h5>
+            <p class="text-muted small mb-0">
+              Dernière connexion : {{ user.last_login|date:"d M Y à H:i" }}
+            </p>
+          </div>
+          <a href="{% url 'accounts:modifier_mdp' %}" class="quick-btn">
+            Modifier mon mot de passe
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Design spécifique pour la page Profil */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, var(--p1) 0%, var(--p2) 100%);
+  }
+
+  textarea {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--r-md) !important;
+    color: white !important;
+    padding: 1rem !important;
+    width: 100%;
+    min-height: 150px;
+    transition: all 0.3s;
+  }
+
+  textarea:focus {
+    border-color: var(--p2) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 0 0 15px var(--p2-glow);
+    outline: none;
+  }
+
+  .custom-file-upload label {
+    cursor: pointer;
+    border: 1px dashed var(--border-accent);
+  }
+
+  .fw-800 {
+    font-weight: 800;
+  }
+</style>
+{% endblock %}

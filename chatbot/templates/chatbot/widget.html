@@ -1,0 +1,35 @@
+<div class="ai-chat-box" id="aiChatBox">
+  <!-- Header -->
+  <div class="ai-chat-header">
+    <div class="d-flex align-items-center">
+      <div class="ai-bot-icon me-2">
+        <i class="bi bi-robot"></i>
+      </div>
+      <div>
+        <h6 class="mb-0 fw-bold">Assistant IA</h6>
+        <small class="ai-status">En ligne</small>
+      </div>
+    </div>
+    <button id="aiCloseBtn" class="btn-close-custom">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- Zone des messages -->
+  <div class="ai-chat-body" id="aiChatBody">
+    <div class="ai-message ai-message-bot shadow-sm">
+      Bonjour {{ user.first_name }} ! 👋 Comment puis-je vous aider avec votre
+      emploi du temps ?
+    </div>
+  </div>
+
+  <!-- Zone de saisie -->
+  <div class="ai-chat-footer">
+    <div class="ai-input-wrapper">
+      <input type="text" id="aiInput" placeholder="Écrire un message..." />
+      <button id="aiSendBtn" type="button">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </div>
+  </div>
+</div>

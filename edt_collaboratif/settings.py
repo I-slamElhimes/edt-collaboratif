@@ -137,10 +137,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Redirection après connexion/déconnexion
-LOGIN_URL = '/accounts/connexion/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/'
-
+LOGIN_URL = 'accounts:connexion'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'accounts:connexion'
 # Clé Groq pour le chatbot (gratuit sur console.groq.com)
 import os
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')

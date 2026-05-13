@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Mes Notifications</h2>
+        <a href="{% url 'notifications:tout_lu' %}" class="btn btn-sm btn-outline-secondary">
+            Tout marquer comme lu
+        </a>
+    </div>
+
+    {% if notifications %}
+        {% for notif in notifications %}
+        <div class="card mb-2 {% if not notif.lu %}border-primary{% endif %}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h6 class="card-title">
+                        {% if not notif.lu %}🔵{% endif %}
+                        {{ notif.titre }}
+                    </h6>
+                    <small class="text-muted">{{ notif.created_at|timesince }}</small>
+                </div>
+                <p class="card-text text-muted">{{ notif.message }}</p>
+                {% if not notif.lu %}
+                <a href="{% url 'notifications:marquer_lu' notif.pk %}" 
+                   class="btn btn-sm btn-primary">
+                    Marquer comme lu
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            Tu n'as aucune notification pour le moment 
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

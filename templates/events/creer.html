@@ -1,0 +1,419 @@
+{% extends 'base.html' %}
+{% block title %}Créer un événement{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ═══════════════════════════════════════════════
+     PAGE HEADER
+  ═══════════════════════════════════════════════ */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .page-header-left h2 {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 0.15rem;
+    letter-spacing: -0.02em;
+  }
+  .page-header-left p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* ═══════════════════════════════════════════════
+     SECTION CARD
+  ═══════════════════════════════════════════════ */
+  .section-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--r-2xl);
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .section-card:hover {
+    border-color: rgba(139, 92, 246, 0.2);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+  }
+  .section-header {
+    padding: 1.2rem 1.6rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .section-header h5 {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-header h5 i { color: var(--p3); }
+  .section-body { padding: 1.6rem; }
+
+  /* ═══════════════════════════════════════════════
+     FORM FIELDS
+  ═══════════════════════════════════════════════ */
+  .form-group { margin-bottom: 1.3rem; }
+
+  .form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.45rem;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .form-label .required { color: #fca5a5; font-size: 0.75rem; }
+
+  /* All inputs, selects, textareas */
+  .form-control,
+  .form-select,
+  input[type="text"],
+  input[type="date"],
+  input[type="time"],
+  input[type="number"],
+  input[type="email"],
+  select,
+  textarea {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 0.5rem !important;
+    color: var(--text-primary) !important;
+    padding: 0.65rem 1rem !important;
+    font-size: 0.88rem !important;
+    transition: all 0.2s ease !important;
+    width: 100% !important;
+    font-family: inherit !important;
+    box-sizing: border-box !important;
+    display: block !important;
+  }
+  .form-control:focus,
+  .form-select:focus,
+  input[type="text"]:focus,
+  input[type="date"]:focus,
+  input[type="time"]:focus,
+  input[type="number"]:focus,
+  input[type="email"]:focus,
+  select:focus,
+  textarea:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--p1) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+    outline: none !important;
+  }
+  textarea,
+  textarea.form-control {
+    resize: vertical !important;
+    min-height: 110px !important;
+    line-height: 1.6 !important;
+  }
+  .form-control::placeholder,
+  textarea::placeholder,
+  input::placeholder { color: var(--text-muted) !important; opacity: 0.7 !important; }
+  select option,
+  .form-select option { background: #1e1e2e; color: var(--text-primary); }
+
+  /* Checkbox */
+  input[type="checkbox"] {
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+    accent-color: var(--p1);
+    cursor: pointer;
+    display: inline-block !important;
+    padding: 0 !important;
+  }
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .checkbox-row:hover { border-color: var(--p1); }
+  .checkbox-row label {
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .form-help { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.35rem; }
+  .field-error {
+    font-size: 0.76rem;
+    color: #fca5a5;
+    margin-top: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .alert-form-error {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 0.5rem;
+    color: #fca5a5;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.85rem;
+    margin-bottom: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  /* ═══════════════════════════════════════════════
+     COLOR PALETTE PICKER
+  ═══════════════════════════════════════════════ */
+  .color-picker-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+  }
+  .color-swatch {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2.5px solid transparent;
+    transition: all 0.18s ease;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .color-swatch:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  }
+  .color-swatch.selected {
+    border-color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
+  }
+  .color-swatch.selected::after {
+    content: "\F26B"; /* bi-check-lg unicode */
+    font-family: "bootstrap-icons";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .color-preview-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .color-preview-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════════════
+     BUTTONS
+  ═══════════════════════════════════════════════ */
+  .btn-footer {
+    display: flex;
+    gap: 0.7rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--border);
+    margin-top: 0.4rem;
+  }
+  .quick-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0.55rem 1.3rem;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.22s ease;
+    border: 1.5px solid var(--border-accent);
+    color: #c4b5fd;
+    background: rgba(79, 70, 229, 0.08);
+    cursor: pointer;
+    letter-spacing: 0.01em;
+  }
+  .quick-btn:hover {
+    background: rgba(79, 70, 229, 0.18);
+    border-color: var(--p3);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.22);
+  }
+  .quick-btn.primary {
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 12px rgba(79, 70, 229, 0.32);
+  }
+  .quick-btn.primary:hover {
+    box-shadow: 0 6px 24px rgba(79, 70, 229, 0.48);
+    transform: translateY(-2px);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="page-header-left">
+    <h2><i class="bi bi-calendar-plus"></i> Créer un événement</h2>
+    <p>Renseignez les détails de votre nouvel événement</p>
+  </div>
+  <a href="{% url 'events:calendrier' %}" class="quick-btn">
+    <i class="bi bi-arrow-left"></i> Retour au calendrier
+  </a>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="section-card">
+      <div class="section-header">
+        <h5><i class="bi bi-pencil-square"></i> Informations de l'événement</h5>
+      </div>
+      <div class="section-body">
+        <form method="post">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="alert-form-error">
+              <i class="bi bi-exclamation-circle"></i> {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+
+          {% for field in form %}
+            {% if field.html_name == 'couleur' %}
+              <!-- ══ COLOR PALETTE PICKER ══ -->
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="bi bi-palette"></i> {{ field.label }}
+                  {% if field.field.required %}<span class="required">*</span>{% endif %}
+                </label>
+
+                <!-- Hidden input Django reads -->
+                <input type="hidden" name="{{ field.html_name }}" id="{{ field.id_for_label }}" value="{{ field.value|default:'#4f46e5' }}">
+
+                <div class="color-picker-wrapper">
+
+                  <div class="color-swatch {% if field.value == '#4f46e5' %}selected{% endif %}" style="background:#4f46e5" data-color="#4f46e5" title="#4f46e5" onclick="selectColor('#4f46e5')"></div>
+                  <div class="color-swatch {% if field.value == '#7c3aed' %}selected{% endif %}" style="background:#7c3aed" data-color="#7c3aed" title="#7c3aed" onclick="selectColor('#7c3aed')"></div>
+                  <div class="color-swatch {% if field.value == '#a855f7' %}selected{% endif %}" style="background:#a855f7" data-color="#a855f7" title="#a855f7" onclick="selectColor('#a855f7')"></div>
+                  <div class="color-swatch {% if field.value == '#ec4899' %}selected{% endif %}" style="background:#ec4899" data-color="#ec4899" title="#ec4899" onclick="selectColor('#ec4899')"></div>
+                  <div class="color-swatch {% if field.value == '#ef4444' %}selected{% endif %}" style="background:#ef4444" data-color="#ef4444" title="#ef4444" onclick="selectColor('#ef4444')"></div>
+                  <div class="color-swatch {% if field.value == '#f97316' %}selected{% endif %}" style="background:#f97316" data-color="#f97316" title="#f97316" onclick="selectColor('#f97316')"></div>
+                  <div class="color-swatch {% if field.value == '#f59e0b' %}selected{% endif %}" style="background:#f59e0b" data-color="#f59e0b" title="#f59e0b" onclick="selectColor('#f59e0b')"></div>
+                  <div class="color-swatch {% if field.value == '#eab308' %}selected{% endif %}" style="background:#eab308" data-color="#eab308" title="#eab308" onclick="selectColor('#eab308')"></div>
+                  <div class="color-swatch {% if field.value == '#22c55e' %}selected{% endif %}" style="background:#22c55e" data-color="#22c55e" title="#22c55e" onclick="selectColor('#22c55e')"></div>
+                  <div class="color-swatch {% if field.value == '#10b981' %}selected{% endif %}" style="background:#10b981" data-color="#10b981" title="#10b981" onclick="selectColor('#10b981')"></div>
+                  <div class="color-swatch {% if field.value == '#14b8a6' %}selected{% endif %}" style="background:#14b8a6" data-color="#14b8a6" title="#14b8a6" onclick="selectColor('#14b8a6')"></div>
+                  <div class="color-swatch {% if field.value == '#06b6d4' %}selected{% endif %}" style="background:#06b6d4" data-color="#06b6d4" title="#06b6d4" onclick="selectColor('#06b6d4')"></div>
+                  <div class="color-swatch {% if field.value == '#3b82f6' %}selected{% endif %}" style="background:#3b82f6" data-color="#3b82f6" title="#3b82f6" onclick="selectColor('#3b82f6')"></div>
+                  <div class="color-swatch {% if field.value == '#6366f1' %}selected{% endif %}" style="background:#6366f1" data-color="#6366f1" title="#6366f1" onclick="selectColor('#6366f1')"></div>
+                  <div class="color-swatch {% if field.value == '#8b5cf6' %}selected{% endif %}" style="background:#8b5cf6" data-color="#8b5cf6" title="#8b5cf6" onclick="selectColor('#8b5cf6')"></div>
+                  <div class="color-swatch {% if field.value == '#d946ef' %}selected{% endif %}" style="background:#d946ef" data-color="#d946ef" title="#d946ef" onclick="selectColor('#d946ef')"></div>
+                  <div class="color-swatch {% if field.value == '#64748b' %}selected{% endif %}" style="background:#64748b" data-color="#64748b" title="#64748b" onclick="selectColor('#64748b')"></div>
+                  <div class="color-swatch {% if field.value == '#94a3b8' %}selected{% endif %}" style="background:#94a3b8" data-color="#94a3b8" title="#94a3b8" onclick="selectColor('#94a3b8')"></div>
+                </div>
+
+                <div class="color-preview-bar">
+                  <div class="color-preview-dot" id="colorPreviewDot" style="background: {{ field.value|default:'#4f46e5' }}"></div>
+                  <span id="colorPreviewText">{{ field.value|default:'#4f46e5' }}</span>
+                </div>
+
+                {% if field.errors %}
+                  {% for error in field.errors %}
+                    <div class="field-error"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+
+            {% else %}
+              <!-- ══ STANDARD FIELDS ══ -->
+              <div class="form-group">
+                <label class="form-label" for="{{ field.id_for_label }}">
+                  {{ field.label }}
+                  {% if field.field.required %}<span class="required">*</span>{% endif %}
+                </label>
+
+                {% if field.field.widget.input_type == 'checkbox' %}
+                  <div class="checkbox-row">
+                    {{ field }}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                {% else %}
+                  {{ field }}
+                {% endif %}
+
+                {% if field.help_text %}
+                  <div class="form-help">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {% if field.errors %}
+                  {% for error in field.errors %}
+                    <div class="field-error"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+
+          <div class="btn-footer">
+            <button type="submit" class="quick-btn primary">
+              <i class="bi bi-check-lg"></i> Créer l'événement
+            </button>
+            <a href="{% url 'events:calendrier' %}" class="quick-btn">
+              <i class="bi bi-x-lg"></i> Annuler
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function selectColor(hex) {
+    // Update hidden input
+    document.getElementById('{{ form.couleur.id_for_label }}').value = hex;
+    // Update preview
+    document.getElementById('colorPreviewDot').style.background = hex;
+    document.getElementById('colorPreviewText').textContent = hex;
+    // Update swatch selection
+    document.querySelectorAll('.color-swatch').forEach(s => {
+      s.classList.toggle('selected', s.dataset.color === hex);
+    });
+  }
+</script>
+{% endblock %}

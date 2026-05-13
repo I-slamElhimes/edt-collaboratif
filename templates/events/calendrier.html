@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% block title %}Calendrier — {{ mois_nom }} {{ annee }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ═══════════════════════════════════════════════
+     PAGE HEADER
+  ═══════════════════════════════════════════════ */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .page-header-left h2 {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 0.15rem;
+    letter-spacing: -0.02em;
+  }
+  .page-header-left p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  .page-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  /* ═══════════════════════════════════════════════
+     SECTION CARD
+  ═══════════════════════════════════════════════ */
+  .section-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--r-2xl);
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .section-card:hover {
+    border-color: rgba(139, 92, 246, 0.2);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  /* ═══════════════════════════════════════════════
+     CALENDAR NAVIGATION BAR
+  ═══════════════════════════════════════════════ */
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .cal-nav-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .cal-nav-btns {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  .quick-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0.45rem 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.22s ease;
+    border: 1.5px solid var(--border-accent);
+    color: #c4b5fd;
+    background: rgba(79, 70, 229, 0.08);
+    letter-spacing: 0.01em;
+    cursor: pointer;
+  }
+  .quick-btn:hover {
+    background: rgba(79, 70, 229, 0.18);
+    border-color: var(--p3);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.22);
+  }
+  .quick-btn.primary {
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 12px rgba(79, 70, 229, 0.32);
+  }
+  .quick-btn.primary:hover {
+    box-shadow: 0 6px 24px rgba(79, 70, 229, 0.48);
+    transform: translateY(-2px);
+  }
+  .quick-btn.today-btn {
+    background: rgba(139, 92, 246, 0.1);
+    border-color: rgba(139, 92, 246, 0.35);
+    color: #c4b5fd;
+    padding: 0.45rem 0.9rem;
+  }
+  .quick-btn.today-btn:hover {
+    background: rgba(139, 92, 246, 0.22);
+    color: white;
+  }
+
+  /* ═══════════════════════════════════════════════
+     DAY HEADERS
+  ═══════════════════════════════════════════════ */
+  .cal-day-headers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .cal-day-header {
+    text-align: center;
+    padding: 0.65rem 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+  .cal-day-header.weekend { color: rgba(139, 92, 246, 0.7); }
+
+  /* ═══════════════════════════════════════════════
+     CALENDAR GRID
+  ═══════════════════════════════════════════════ */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+  .cal-cell {
+    min-height: 110px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 0.45rem 0.4rem;
+    position: relative;
+    transition: background 0.18s;
+    vertical-align: top;
+  }
+  .cal-cell:nth-child(7n) { border-right: none; }
+  .cal-cell:hover { background: rgba(255, 255, 255, 0.025); }
+  .cal-cell.empty {
+    background: rgba(0, 0, 0, 0.08);
+  }
+  .cal-cell.today {
+    background: rgba(79, 70, 229, 0.06);
+  }
+  .cal-cell.weekend-cell {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  /* Day number */
+  .cal-day-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    transition: all 0.18s;
+  }
+  .cal-cell:hover .cal-day-num {
+    background: rgba(139, 92, 246, 0.12);
+    color: var(--text-primary);
+  }
+  .cal-cell.today .cal-day-num {
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    color: white;
+    box-shadow: 0 3px 12px rgba(79, 70, 229, 0.4);
+  }
+  .cal-cell.weekend-cell .cal-day-num { color: rgba(139, 92, 246, 0.6); }
+
+  /* Event chips */
+  .cal-events { display: flex; flex-direction: column; gap: 3px; }
+  .cal-event-chip {
+    display: block;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.15s, transform 0.15s;
+    line-height: 1.5;
+  }
+  .cal-event-chip:hover {
+    opacity: 0.85;
+    transform: translateX(2px);
+    color: white;
+  }
+  .cal-event-chip .chip-time {
+    opacity: 0.75;
+    font-weight: 500;
+    margin-right: 3px;
+  }
+
+  /* More events overflow */
+  .cal-more {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    padding: 1px 4px;
+    cursor: default;
+    font-weight: 600;
+  }
+
+  /* ═══════════════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════════════ */
+  @media (max-width: 768px) {
+    .cal-cell { min-height: 70px; padding: 0.35rem 0.25rem; }
+    .cal-day-num { width: 22px; height: 22px; font-size: 0.72rem; }
+    .cal-event-chip { font-size: 0.62rem; padding: 2px 4px; }
+    .chip-time { display: none; }
+  }
+  @media (max-width: 480px) {
+    .cal-cell { min-height: 50px; }
+    .cal-event-chip .chip-time { display: none; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ EN-TÊTE ══ -->
+<div class="page-header">
+  <div class="page-header-left">
+    <h2><i class="bi bi-calendar3"></i> Calendrier</h2>
+    <p>Visualisez et gérez tous vos événements</p>
+  </div>
+  <div class="page-header-right">
+    <a href="{% url 'events:creer' %}" class="quick-btn primary">
+      <i class="bi bi-plus-lg"></i> Nouvel événement
+    </a>
+  </div>
+</div>
+
+<!-- ══ CALENDRIER ══ -->
+<div class="section-card">
+
+  <!-- Navigation -->
+  <div class="cal-nav">
+    <span class="cal-nav-title">{{ mois_nom }} {{ annee }}</span>
+    <div class="cal-nav-btns">
+      {% if mois == 1 %}
+        <a href="?mois=12&annee={{ annee|add:'-1' }}" class="quick-btn">
+          <i class="bi bi-chevron-left"></i> Précédent
+        </a>
+      {% else %}
+        <a href="?mois={{ mois|add:'-1' }}&annee={{ annee }}" class="quick-btn">
+          <i class="bi bi-chevron-left"></i> Précédent
+        </a>
+      {% endif %}
+
+      <a href="?" class="quick-btn today-btn">
+        <i class="bi bi-record-circle"></i> Aujourd'hui
+      </a>
+
+      {% if mois == 12 %}
+        <a href="?mois=1&annee={{ annee|add:'1' }}" class="quick-btn">
+          Suivant <i class="bi bi-chevron-right"></i>
+        </a>
+      {% else %}
+        <a href="?mois={{ mois|add:'1' }}&annee={{ annee }}" class="quick-btn">
+          Suivant <i class="bi bi-chevron-right"></i>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Day headers -->
+  <div class="cal-day-headers">
+    <div class="cal-day-header">Lun</div>
+    <div class="cal-day-header">Mar</div>
+    <div class="cal-day-header">Mer</div>
+    <div class="cal-day-header">Jeu</div>
+    <div class="cal-day-header">Ven</div>
+    <div class="cal-day-header weekend">Sam</div>
+    <div class="cal-day-header weekend">Dim</div>
+  </div>
+
+  <!-- Grid -->
+  <div class="cal-grid">
+    {% for semaine in calendrier %}
+      {% for jour in semaine %}
+        {% if jour == 0 %}
+          <div class="cal-cell empty"></div>
+        {% else %}
+          {% comment %}Determine if today{% endcomment %}
+          <div class="cal-cell
+            {% now 'd' as today_day %}{% now 'n' as today_month %}{% now 'Y' as today_year %}
+            {% if jour|stringformat:'s' == today_day and mois|stringformat:'s' == today_month and annee|stringformat:'s' == today_year %}today{% endif %}
+            {% if forloop.counter0|divisibleby:6 or forloop.counter == 7 %}weekend-cell{% endif %}
+          ">
+            <div class="cal-day-num">{{ jour }}</div>
+            <div class="cal-events">
+              {% for evt in evenements %}
+                {% if evt.date.day == jour %}
+                  <a href="{% url 'events:detail' evt.pk %}"
+                     class="cal-event-chip"
+                     style="background: {{ evt.couleur }}"
+                     title="{{ evt.titre }} — {{ evt.heure_debut|time:'H:i' }}">
+                    <span class="chip-time">{{ evt.heure_debut|time:"H:i" }}</span>{{ evt.titre }}
+                  </a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

@@ -70,7 +70,16 @@
                 <span>Dashboard</span>
               </a>
             </li>
-
+<li>
+  <a href="{% url 'notifications:liste' %}" 
+     class="sidebar-link {% if request.resolver_match.url_name == 'liste' %}active{% endif %}">
+    <i class="bi bi-bell"></i>
+    <span>Notifications</span>
+    {% if nb_notifs_non_lues %}
+    <span class="badge bg-danger ms-auto">{{ nb_notifs_non_lues }}</span>
+    {% endif %}
+  </a>
+</li>
             <li>
               <a href="#" class="sidebar-link">
                 <i class="bi bi-calendar3"></i>

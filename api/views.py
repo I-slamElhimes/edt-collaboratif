@@ -1,7 +1,8 @@
 from rest_framework import viewsets, permissions
 from events.models import Evenement
 from groups.models import Groupe
-from .serializers import EvenementSerializer, GroupeSerializer
+from notifications.models import Notification
+from .serializers import EvenementSerializer, GroupeSerializer, NotificationSerializer
 
 class EvenementViewSet(viewsets.ModelViewSet):
     serializer_class = EvenementSerializer
@@ -17,4 +18,9 @@ class GroupeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Groupe.objects.filter(membres=self.request.user)
 
-# Create your views here.
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Notification.objects.filter(destinataire=self.request.user)

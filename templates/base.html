@@ -141,11 +141,11 @@
           </div>
 
           <div class="sidebar-user-actions">
-            <a href="#" class="sidebar-user-btn">
+            <a href="{% url 'notifications:liste' %}" class="sidebar-user-btn">
               <i class="bi bi-bell"></i>
 
-              {% if notifications_count %}
-              <span class="notif-dot"></span>
+              {% if nb_notifs_non_lues %}
+              <span class="notif-dot">{{ nb_notifs_non_lues }}</span>
               {% endif %}
             </a>
 

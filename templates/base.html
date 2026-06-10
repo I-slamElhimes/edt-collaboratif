@@ -97,6 +97,19 @@
                 <span>Dashboard</span>
               </a>
             </li>
+<<<<<<< HEAD
+=======
+<li>
+  <a href="{% url 'notifications:liste' %}" 
+     class="sidebar-link {% if request.resolver_match.url_name == 'liste' %}active{% endif %}">
+    <i class="bi bi-bell"></i>
+    <span>Notifications</span>
+    {% if nb_notifs_non_lues %}
+    <span class="badge bg-danger ms-auto">{{ nb_notifs_non_lues }}</span>
+    {% endif %}
+  </a>
+</li>
+>>>>>>> origin/feature/notifications
             <li>
               <a href="{% url 'events:calendrier' %}" class="sidebar-link"
                 ><i class="bi bi-calendar3"></i><span>Calendrier</span></a
@@ -142,11 +155,23 @@
             <span class="sidebar-user-role">Étudiant</span>
           </div>
           <div class="sidebar-user-actions">
+
             <a
               href="{% url 'accounts:deconnexion' %}"
               class="sidebar-user-btn text-danger-soft"
               title="Déconnexion"
             >
+
+            <a href="{% url 'notifications:liste' %}" class="sidebar-user-btn">
+              <i class="bi bi-bell"></i>
+
+              {% if nb_notifs_non_lues %}
+              <span class="notif-dot">{{ nb_notifs_non_lues }}</span>
+              {% endif %}
+            </a>
+
+            <a href="#" class="sidebar-user-btn text-danger-soft">
+
               <i class="bi bi-box-arrow-right"></i>
             </a>
           </div>

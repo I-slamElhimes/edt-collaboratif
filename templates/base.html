@@ -30,6 +30,45 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}" />
 
+    <style>
+      html, body {
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+      .app-layout {
+        display: flex !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+      }
+      .main-area {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: visible !important;
+        min-width: 0 !important;
+      }
+      .topbar {
+        flex-shrink: 0 !important;
+        position: relative !important;
+        top: auto !important;
+        z-index: 1050 !important;
+        width: 100% !important;
+      }
+      .topbar .dropdown-menu {
+        z-index: 1051 !important;
+      }
+      .main-content {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        min-height: 0 !important;
+        position: relative !important;
+        z-index: 1 !important;
+      }
+    </style>
+
     {% block extra_css %}{% endblock %}
   </head>
 
